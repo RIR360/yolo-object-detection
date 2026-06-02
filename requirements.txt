@@ -1,0 +1,10 @@
+--find-links https://pytorch.org
+torch
+torchvision
+ultralytics
+streamlit
+opencv-python-headless
+pillow
+requests
+pandas
+matplotlib
