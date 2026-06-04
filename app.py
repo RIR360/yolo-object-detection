@@ -46,17 +46,16 @@ st.markdown("""
         line-height: 1.2;
     }
     .small-subtitle {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         font-weight: 400;
         margin-top: 0;
-        color: #555;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # Custom title block
 st.markdown('<div class="big-title">YOLOv8</div>', unsafe_allow_html=True)
-st.markdown('<div class="">Object Detection Tool</div>', unsafe_allow_html=True)
+st.markdown('<div class="small-subtitle">Object Detection Tool</div>', unsafe_allow_html=True)
 
 # Load the YOLO model
 @st.cache_resource
