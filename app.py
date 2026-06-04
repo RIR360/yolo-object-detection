@@ -56,7 +56,7 @@ st.markdown("""
 
 # Custom title block
 st.markdown('<div class="big-title">YOLOv8</div>', unsafe_allow_html=True)
-st.markdown('<div class="small-subtitle">Object Detection Tool</div>', unsafe_allow_html=True)
+st.markdown('<div class="">Object Detection Tool</div>', unsafe_allow_html=True)
 
 # Load the YOLO model
 @st.cache_resource
