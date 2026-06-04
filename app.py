@@ -6,6 +6,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 from ultralytics import YOLO
+import imageio
 
 # Set page configuration
 st.set_page_config(
@@ -151,7 +152,7 @@ with col_detector:
                         except Exception as e:
                             st.error(f"Error running object detection: {e}")
                             
-        # VIDEO DETECTION TAB
+        # VIDEO DETECTION TAB (using imageio)
         with tab_video:
             st.write("Upload a video to detect objects. Only the first 30 seconds will be processed.")
             uploaded_video = st.file_uploader("Choose a video file...", type=["mp4", "avi", "mov", "mkv"])
@@ -174,8 +175,8 @@ with col_detector:
                         st.error("Error opening uploaded video file.")
                     else:
                         fps = cap.get(cv2.CAP_PROP_FPS)
-                        if fps <= 0 or os.environ.get("STREAMLIT_TESTING"): 
-                            fps = 30.0  # Fallback to standard fps if unable to detect
+                        if fps <= 0:
+                            fps = 30.0  # Fallback
                         
                         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -187,13 +188,10 @@ with col_detector:
                         
                         st.info(f"Processing up to {frames_to_process} frames ({min(30, int(total_frames / fps))} seconds at {fps:.2f} FPS).")
                         
-                        # Set up VideoWriter
-                        # Note: mp4v is widely supported; for direct web playability, H264 is ideal
-                        fourcc = cv2.VideoWriter_fourcc(*'h264')
-                        out = cv2.VideoWriter(temp_output_path, fourcc, fps, (width, height))
-                        
                         progress_bar = st.progress(0.0)
                         status_text = st.empty()
+                        
+                        frames_list = []  # list to store RGB frames for imageio
                         
                         try:
                             frame_count = 0
@@ -204,10 +202,10 @@ with col_detector:
                                 
                                 # Run inference on current frame
                                 results = model(frame)
-                                annotated_frame = results[0].plot()
-                                
-                                # Write frame to output video
-                                out.write(annotated_frame)
+                                annotated_frame_bgr = results[0].plot()
+                                # Convert BGR to RGB
+                                annotated_frame_rgb = cv2.cvtColor(annotated_frame_bgr, cv2.COLOR_BGR2RGB)
+                                frames_list.append(annotated_frame_rgb)
                                 
                                 frame_count += 1
                                 progress = frame_count / frames_to_process
@@ -215,16 +213,23 @@ with col_detector:
                                 status_text.text(f"Processed frame {frame_count}/{frames_to_process}...")
                                 
                             cap.release()
-                            out.release()
                             
-                            status_text.text("Detection completed! Rendering video...")
-                            
-                            # Read video file bytes to show in streamlit
-                            with open(temp_output_path, 'rb') as f:
-                                video_bytes = f.read()
-                            
-                            st.write("**Processed Video (First 30s):**")
-                            st.video(video_bytes)
+                            if frames_list:
+                                status_text.text("Writing video file with imageio...")
+                                # Write video using imageio (H.264 codec)
+                                imageio.mimwrite(temp_output_path, frames_list, fps=fps, codec='libx264', quality=8)
+                                
+                                # Check if file was created and not empty
+                                if os.path.exists(temp_output_path) and os.path.getsize(temp_output_path) > 0:
+                                    status_text.text("Detection completed! Rendering video...")
+                                    with open(temp_output_path, 'rb') as f:
+                                        video_bytes = f.read()
+                                    st.write("**Processed Video (First 30s):**")
+                                    st.video(video_bytes)
+                                else:
+                                    st.error("Processed video file is empty or could not be created.")
+                            else:
+                                st.error("No frames were processed. Cannot create video.")
                             
                         except Exception as e:
                             st.error(f"Error during video detection: {e}")
