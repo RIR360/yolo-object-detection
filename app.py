@@ -189,7 +189,7 @@ with col_detector:
                         
                         # Set up VideoWriter
                         # Note: mp4v is widely supported; for direct web playability, H264 is ideal
-                        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                        fourcc = cv2.VideoWriter_fourcc(*'avc1')
                         out = cv2.VideoWriter(temp_output_path, fourcc, fps, (width, height))
                         
                         progress_bar = st.progress(0.0)
