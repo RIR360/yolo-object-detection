@@ -27,7 +27,7 @@ except Exception as e:
     model = None
 
 # App Title & Creators Info
-st.title("🔍 YOLOv8 Object Detection Tool")
+st.title("YOLOv8 Object Detection Tool")
 st.markdown("""
 ### About this Project
 This application is a **YOLOv8 Object Detection Tool** that allows users to perform object detection on images and videos. 
@@ -41,7 +41,7 @@ Users can upload an image or paste an image URL, or upload a video (where the to
 col_samples, col_detector = st.columns([1, 2])
 
 with col_samples:
-    st.subheader("📁 Sample Detection Media")
+    st.subheader("Sample Detection Media")
     
     # Show Sample Image
     if os.path.exists("image-detection.png"):
@@ -58,7 +58,7 @@ with col_samples:
         st.warning("Sample video 'video-detection.mp4' not found.")
 
 with col_detector:
-    st.subheader("🚀 Object Detector")
+    st.subheader("Object Detector")
     
     if model is None:
         st.warning("Model loading failed. Detection features are disabled.")
