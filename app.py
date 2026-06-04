@@ -14,6 +14,50 @@ st.set_page_config(
     layout="wide"
 )
 
+# Custom CSS to remove default header, reduce max-width, and style title
+st.markdown("""
+<style>
+    /* Remove Streamlit default header, footer, and menu */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    .stApp > header {display: none;}
+    #MainMenu {visibility: hidden;}
+    
+    /* Reduce max-width of main content on large screens */
+    .main .block-container {
+        max-width: 1200px;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        margin: 0 auto;
+    }
+    
+    /* Optional: adjust default padding on very large screens */
+    @media (min-width: 1600px) {
+        .main .block-container {
+            max-width: 1200px;
+        }
+    }
+    
+    /* Title styling: big YOLOv8, small subtitle */
+    .big-title {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 0;
+        line-height: 1.2;
+    }
+    .small-subtitle {
+        font-size: 1.2rem;
+        font-weight: 400;
+        margin-top: 0;
+        color: #555;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Custom title block
+st.markdown('<div class="big-title">YOLOv8</div>', unsafe_allow_html=True)
+st.markdown('<div class="small-subtitle">Object Detection Tool</div>', unsafe_allow_html=True)
+
 # Load the YOLO model
 @st.cache_resource
 def load_yolo_model():
@@ -26,8 +70,7 @@ except Exception as e:
     st.error(f"Error loading YOLO model: {e}. Please ensure 'yolov8m.pt' is present in the workspace.")
     model = None
 
-# App Title & Creators Info
-st.title("YOLOv8 Object Detection Tool")
+# About this Project section
 st.markdown("""
 ### About this Project
 This application is a **YOLOv8 Object Detection Tool** that allows users to perform object detection on images and videos. 
