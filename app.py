@@ -73,6 +73,7 @@ except Exception as e:
 st.markdown("""
 ### About this Project
 This application is a **YOLOv8 Object Detection Tool** that allows users to perform object detection on images and videos. 
+
 Users can upload an image or paste an image URL, or upload a video (where the tool will automatically process up to the first 30 seconds of footage).
 
 **Creators:** Foysal Ahmed & Ashraf Mia  
